@@ -7,7 +7,6 @@
     "setupFiles": [
       "./setup-jest.js"
     ],
-    "testMatch": ["**/__tests__/**/*.js"],
     "collectCoverageFrom": [
       "**/*.{js,jsx}",
       "!**/app/**",
