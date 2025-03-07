@@ -52,6 +52,8 @@ export default class {
               }
             }
           })
+          .sort((a, b) => new Date(a.date) - new Date(b.date));
+          /* .sort((a, b) => a.date.localeCompare(b.date)); */
           console.log('length', bills.length)
           console.log('bills', bills)
         return bills
