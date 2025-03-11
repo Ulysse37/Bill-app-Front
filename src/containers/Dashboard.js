@@ -53,6 +53,8 @@ export const card = (bill) => {
 }
 
 export const cards = (bills) => {
+  console.log("CARDS bills", bills);
+  
   return bills && bills.length ? bills.map(bill => card(bill)).join("") : ""
 }
 
@@ -130,7 +132,7 @@ export default class {
     this.onNavigate(ROUTES_PATH['Dashboard'])
   }
 
-  handleShowTickets(e, bills, index) {
+  /* handleShowTickets(e, bills, index) {
     if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
     if (this.counter % 2 === 0) {
@@ -148,9 +150,41 @@ export default class {
     bills.forEach(bill => {
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
     })
-
+    console.log("Counter", this.counter);
+    console.log("Bills :", bills);
+    console.log("index :", index);
+    console.log("getStatus :", getStatus(index));
     return bills
 
+  } */
+
+  handleShowTickets(e, bills, index) {
+    if (this.index === undefined || this.index !== index) {
+      this.index = index;
+      this.isOpen = true;
+    }
+  
+    if (!this.isOpen) {
+      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)' });
+      $(`#status-bills-container${this.index}`)
+        .html(cards(filteredBills(bills, getStatus(this.index))));
+      this.isOpen = true;
+    } else {
+      $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)' });
+      $(`#status-bills-container${this.index}`)
+        .html("");
+      this.isOpen = false;
+    }
+  
+    bills.forEach(bill => {
+      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills));
+    });
+  
+    console.log("IsOpen", this.isOpen);
+    console.log("Bills :", bills);
+    console.log("index :", index);
+    console.log("getStatus :", getStatus(index));
+    return bills;
   }
 
   getBillsAllUsers = () => {
