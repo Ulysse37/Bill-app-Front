@@ -74,13 +74,17 @@ export default class {
     this.document = document
     this.onNavigate = onNavigate
     this.store = store
-    this.isOpen = {};
+    this.isOpen = {
+      1: false,
+      2: false,
+      3: false
+    };
     $('#arrow-icon1').click((e) => this.handleShowTickets(e, bills, 1))
     $('#arrow-icon2').click((e) => this.handleShowTickets(e, bills, 2))
     $('#arrow-icon3').click((e) => this.handleShowTickets(e, bills, 3))
+    
     new Logout({ localStorage, onNavigate })
   }
-
   handleClickIconEye = () => {
     const billUrl = $('#icon-eye-d').attr("data-bill-url")
     const imgWidth = Math.floor($('#modaleFileAdmin1').width() * 0.8)
@@ -99,7 +103,7 @@ export default class {
       $('.dashboard-right-container div').html(DashboardFormUI(bill))
       $('.vertical-navbar').css({ height: '150vh' })
       this.counter ++
-    } else {
+    } /* else {
       $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })
 
       $('.dashboard-right-container div').html(`
@@ -107,7 +111,7 @@ export default class {
       `)
       $('.vertical-navbar').css({ height: '120vh' })
       this.counter ++
-    }
+    } */
     $('#icon-eye-d').click(this.handleClickIconEye)
     $('#btn-accept-bill').click((e) => this.handleAcceptSubmit(e, bill))
     $('#btn-refuse-bill').click((e) => this.handleRefuseSubmit(e, bill))
@@ -159,7 +163,7 @@ export default class {
 
   } */
 
-  handleShowTickets(e, bills, index) { // méthode originale mais booléen
+  /* handleShowTickets(e, bills, index) { // méthode originale mais booléen
     if (this.index === undefined || this.index !== index) {
       this.index = index;
       this.isOpen = false;
@@ -180,15 +184,15 @@ export default class {
     bills.forEach(bill => {
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills));
     });
-  
+
     console.log("IsOpen", this.isOpen);
     //console.log("Bills :", bills);
     console.log("index :", index);
     //console.log("getStatus :", getStatus(index));
     return bills;
-  }
+  } */
 
- /* handleShowTickets(e, bills, index) { // METHODE QUI MARCHE SI JE FERME TOUT ET REOUVRE
+ handleShowTickets(e, bills, index) { // METHODE QUI MARCHE SI JE FERME TOUT ET REOUVRE
   const isOpen = this.isOpen[index];
   if (isOpen === undefined || isOpen === false) {
     this.isOpen[index] = true;
@@ -213,7 +217,7 @@ export default class {
   console.log("IsOpen", this.isOpen);
   console.log("index :", index);
   return bills;
-} */
+}
 
   getBillsAllUsers = () => {
     if (this.store) {
