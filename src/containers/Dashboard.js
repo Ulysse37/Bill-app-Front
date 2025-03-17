@@ -74,6 +74,7 @@ export default class {
     this.document = document
     this.onNavigate = onNavigate
     this.store = store
+    this.isOpen = {};
     $('#arrow-icon1').click((e) => this.handleShowTickets(e, bills, 1))
     $('#arrow-icon2').click((e) => this.handleShowTickets(e, bills, 2))
     $('#arrow-icon3').click((e) => this.handleShowTickets(e, bills, 3))
@@ -132,7 +133,7 @@ export default class {
     this.onNavigate(ROUTES_PATH['Dashboard'])
   }
 
-  /* handleShowTickets(e, bills, index) {
+  /* handleShowTickets(e, bills, index) { // Méthode originale 
     if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
     if (this.counter % 2 === 0) {
@@ -158,10 +159,10 @@ export default class {
 
   } */
 
-  handleShowTickets(e, bills, index) {
+  handleShowTickets(e, bills, index) { // méthode originale mais booléen
     if (this.index === undefined || this.index !== index) {
       this.index = index;
-      this.isOpen = true;
+      this.isOpen = false;
     }
   
     if (!this.isOpen) {
@@ -181,11 +182,38 @@ export default class {
     });
   
     console.log("IsOpen", this.isOpen);
-    console.log("Bills :", bills);
+    //console.log("Bills :", bills);
     console.log("index :", index);
-    console.log("getStatus :", getStatus(index));
+    //console.log("getStatus :", getStatus(index));
     return bills;
   }
+
+ /* handleShowTickets(e, bills, index) { // METHODE QUI MARCHE SI JE FERME TOUT ET REOUVRE
+  const isOpen = this.isOpen[index];
+  if (isOpen === undefined || isOpen === false) {
+    this.isOpen[index] = true;
+  } else {
+    this.isOpen[index] = false;
+  }
+
+  if (this.isOpen[index]) {
+    $(`#arrow-icon${index}`).css({ transform: 'rotate(0deg)' });
+    $(`#status-bills-container${index}`)
+      .html(cards(filteredBills(bills, getStatus(index))));
+  } else {
+    $(`#arrow-icon${index}`).css({ transform: 'rotate(90deg)' });
+    $(`#status-bills-container${index}`)
+      .html("");
+  }
+
+  bills.forEach(bill => {
+    $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills));
+  });
+
+  console.log("IsOpen", this.isOpen);
+  console.log("index :", index);
+  return bills;
+} */
 
   getBillsAllUsers = () => {
     if (this.store) {

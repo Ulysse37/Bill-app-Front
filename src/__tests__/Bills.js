@@ -34,7 +34,7 @@ describe("Given I am connected as an employee", () => {
       /* const antiChrono = (a, b) => ((a < b) ? 1 : -1) */
       const chrono = (a, b) => new Date(a) - new Date(b);
       const datesSorted = [...dates].sort(chrono);
-      expect(dates).toEqual(datesSorted);    
+      expect(dates).toEqual(datesSorted);
     })
   })
 })
