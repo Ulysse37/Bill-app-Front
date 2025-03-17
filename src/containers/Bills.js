@@ -52,9 +52,9 @@ export default class {
               }
             }
           })
-          .sort((a, b) => new Date(a.date) - new Date(b.date)); // sort les bills de la plus ancienne à la plus récente
-          console.log('length', bills.length);
-          console.log('bills', bills);
+          /* .sort((a, b) => new Date(a.date) - new Date(b.date)); */ // sort les bills de la plus ancienne à la plus récente
+          /* console.log('length', bills.length);
+          console.log('bills', bills); */
         return bills
       })
     }

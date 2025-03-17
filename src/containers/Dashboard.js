@@ -103,7 +103,7 @@ export default class {
       $('.dashboard-right-container div').html(DashboardFormUI(bill))
       $('.vertical-navbar').css({ height: '150vh' })
       this.counter ++
-    } /* else {
+    } /* else {  //! Si suppr = fix bug mais ajout fail test dashboard : Then, big bill Icon should Appear
       $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })
 
       $('.dashboard-right-container div').html(`
@@ -200,11 +200,11 @@ export default class {
     this.isOpen[index] = false;
   }
 
-  if (this.isOpen[index]) {
+  if (this.isOpen[index]) { // Si la catégorie est ouverte affiche les tickets
     $(`#arrow-icon${index}`).css({ transform: 'rotate(0deg)' });
     $(`#status-bills-container${index}`)
       .html(cards(filteredBills(bills, getStatus(index))));
-  } else {
+  } else { // sinon affiche rien
     $(`#arrow-icon${index}`).css({ transform: 'rotate(90deg)' });
     $(`#status-bills-container${index}`)
       .html("");
