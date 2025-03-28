@@ -5,9 +5,10 @@
 import {screen, waitFor} from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
-import { ROUTES_PATH} from "../constants/routes.js";
+import { ROUTES, ROUTES_PATH} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
-
+import Bills from "../containers/Bills.js"
+import userEvent from '@testing-library/user-event';
 import router from "../app/Router.js";
 
 describe("Given I am connected as an employee", () => {
@@ -26,7 +27,7 @@ describe("Given I am connected as an employee", () => {
       await waitFor(() => screen.getByTestId('icon-window'))
       const windowIcon = screen.getByTestId('icon-window')
       //to-do write expect expression
-      expect(windowIcon.className).toContain('active-icon');
+      expect(windowIcon.className).toContain('active-icon'); // ajout expect 
 
     })
     test("Then bills should be ordered from earliest to latest", () => {
@@ -35,6 +36,49 @@ describe("Given I am connected as an employee", () => {
       const chrono = (a, b) => new Date(a) - new Date(b);
       const datesSorted = [...dates].sort(chrono);
       expect(dates).toEqual(datesSorted);
+    })
+    // Ajout des nouveaux test 
+    describe('When I click on the icon eye', () => {
+      test('A modal should open', () => {
+        Object.defineProperty(window, 'localStorage', { value: localStorageMock }) // simule scénario où l'utilisateur est connecté en employé
+        window.localStorage.setItem('user', JSON.stringify({ 
+          type: 'Employee'    
+        }));
+        const onNavigate = (pathname) => {
+          document.body.innerHTML = ROUTES({ pathname })
+        };
+        document.body.innerHTML = BillsUI({ data: bills });
+        const store = null;
+        const billsInstance = new Bills({ document, onNavigate, store, bills, localStorage: window.localStorage });
+        const handleClickIconEye = jest.fn(billsInstance.handleClickIconEye);
+        const eyes = screen.getAllByTestId('icon-eye');
+        const eye = eyes[0];
+        eye.addEventListener('click', handleClickIconEye);
+        userEvent.click(eye);
+        expect(handleClickIconEye).toHaveBeenCalled();
+
+        const modale = screen.getByTestId('modaleFileEmployee');
+        expect(modale).toBeTruthy();
+      })
+    })
+    describe('When I click on the add a new bill button', () => {
+      test('Then, I should be sent the new bill page', () => {
+        const onNavigate = (pathname) => {
+          document.body.innerHTML = ROUTES({ pathname })
+        };
+        Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+        window.localStorage.setItem('user', JSON.stringify({
+          type: 'employee'
+        }));
+        /* document.body.innerHTML = BillsUI({ data: bills }); */
+        const billsInstance = new Bills({ document, onNavigate, localStorage });
+        const handleClickNewBill = jest.fn(billsInstance.handleClickNewBill)
+        const newBillButton = screen.getByTestId('btn-new-bill');;
+        newBillButton.addEventListener('click', handleClickNewBill);
+        userEvent.click(newBillButton);
+        expect(handleClickNewBill).toHaveBeenCalled();
+        expect(screen.getByText('Envoyer une note de frais')).toBeTruthy();
+      })
     })
   })
 })
