@@ -57,7 +57,7 @@ describe("Given I am connected as an employee", () => {
         const eye = eyes[0];
         eye.addEventListener('click', handleClickIconEye);
         userEvent.click(eye);
-        expect(handleClickIconEye).toHaveBeenCalled();
+        expect(handleClickIconEye).toHaveBeenCalled(); // ce expect doit marcher car il augmente le coverage 
 
         const modale = screen.getByTestId('modaleFileEmployee');
         expect(modale).toBeTruthy();
