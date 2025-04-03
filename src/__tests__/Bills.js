@@ -10,6 +10,7 @@ import {localStorageMock} from "../__mocks__/localStorage.js";
 import Bills from "../containers/Bills.js"
 import userEvent from '@testing-library/user-event';
 import router from "../app/Router.js";
+import mockStore from "../__mocks__/store"
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -52,6 +53,7 @@ describe("Given I am connected as an employee", () => {
         const billsInstance = new Bills({ document, onNavigate, store, bills, localStorage: window.localStorage });
         const handleClickIconEye = jest.fn(billsInstance.handleClickIconEye);
         const eyes = screen.getAllByTestId('icon-eye');
+        /* const eyes = document.querySelector(`div[data-testid="icon-eye"]`); */
         const eye = eyes[0];
         eye.addEventListener('click', handleClickIconEye);
         userEvent.click(eye);
@@ -79,6 +81,72 @@ describe("Given I am connected as an employee", () => {
         expect(handleClickNewBill).toHaveBeenCalled();
         expect(screen.getByText('Envoyer une note de frais')).toBeTruthy();
       })
+    })
+  })
+})
+
+// test d'intégration GET Bills
+
+describe("Given I am a user connected as an employee", () => {
+  describe("When I navigate to Bills", () => {
+    test("fetches bills from mock API GET", async () => {
+      localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
+      const root = document.createElement("div")
+      root.setAttribute("id", "root")
+      document.body.append(root)
+      router()
+      window.onNavigate(ROUTES_PATH.Bills)
+      await waitFor(() => screen.getByText("Mes notes de frais")) // problème 1 : trouve pas le texte
+      const billsElt = await screen.getByTestId("tbody") // je sais pas si je dois tester ça ?
+      expect(billsElt).toBeTruthy()
+    })
+  })
+
+  describe("When an error occurs on API", () => {
+    beforeEach(() => {
+      jest.spyOn(mockStore, "bills")
+      Object.defineProperty(
+          window,
+          'localStorage',
+          { value: localStorageMock }
+      )
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee',
+        email: "a@a"
+      }))
+      const root = document.createElement("div")
+      root.setAttribute("id", "root")
+      document.body.appendChild(root)
+      router()
+    })
+
+    test("fetches bills from an API and fails with 404 message error", async () => {
+
+      mockStore.bills.mockImplementationOnce(() => {
+        return {
+          list : () =>  {
+            return Promise.reject(new Error("Erreur 404"))
+          }
+        }})
+      window.onNavigate(ROUTES_PATH.Bills)
+      await new Promise(process.nextTick);
+      const message = await screen.getByText(/Erreur 404/)
+      expect(message).toBeTruthy()
+    })
+
+    test("fetches messages from an API and fails with 500 message error", async () => {
+
+      mockStore.bills.mockImplementationOnce(() => {
+        return {
+          list : () =>  {
+            return Promise.reject(new Error("Erreur 500"))
+          }
+        }})
+
+      window.onNavigate(ROUTES_PATH.Bills)
+      await new Promise(process.nextTick);
+      const message = await screen.getByText(/Erreur 500/)
+      expect(message).toBeTruthy()
     })
   })
 })
