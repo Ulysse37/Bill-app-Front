@@ -45,15 +45,30 @@ describe("Given I am connected as an employee", () => {
         fireEvent.change(expenseFile, { target: { files: ['file.jpg'] } });
 
         const form = container.querySelector('[data-testid="form-new-bill"]');
-        const handleSubmit = jest.fn();
+        const handleSubmit = jest.fn(container.handleSubmit);
         form.addEventListener('submit', handleSubmit);
         fireEvent.submit(form);
         expect(handleSubmit).toHaveBeenCalled();
-
       })
-      /* test("Then, I should be redirected to the Bills page", () => {
-
-      }) */
+      
+      test("Then, I should be redirected to the Bills page", () => {
+        const onNavigate = (pathname) => {
+          document.body.innerHTML = ROUTES({ pathname })
+        };
+        Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+        window.localStorage.setItem('user', JSON.stringify({
+          type: 'employee'
+        }));
+        const newBillsInstance = new NewBill({ document, onNavigate, localStorage });
+        const handleSubmitNewBill = jest.fn(newBillsInstance.handleSubmit)
+        const form = screen.getByTestId('form-new-bill');
+        form.addEventListener('submit', handleSubmitNewBill);
+        /* userEvent.click(form); */
+        fireEvent.submit(form);
+        expect(handleClickNewBill).toHaveBeenCalled();
+        /* expect(screen.getByText('Envoyer une note de frais')).toBeTruthy(); */
+        expect(screen.getByText('Mes notes de frais ')).toBeTruthy();
+      })
     })
   })
 })

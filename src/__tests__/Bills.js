@@ -77,7 +77,7 @@ describe("Given I am connected as an employee", () => {
         /* document.body.innerHTML = BillsUI({ data: bills }); */
         const billsInstance = new Bills({ document, onNavigate, localStorage });
         const handleClickNewBill = jest.fn(billsInstance.handleClickNewBill)
-        const newBillButton = screen.getByTestId('btn-new-bill');;
+        const newBillButton = screen.getByTestId('btn-new-bill');
         newBillButton.addEventListener('click', handleClickNewBill);
         userEvent.click(newBillButton);
         expect(handleClickNewBill).toHaveBeenCalled();
