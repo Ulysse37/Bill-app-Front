@@ -48,7 +48,9 @@ describe("Given I am connected as an employee", () => {
         const onNavigate = (pathname) => {
           document.body.innerHTML = ROUTES({ pathname })
         };
-        document.body.innerHTML = BillsUI({ data: bills });
+        const html = BillsUI( { data: bills } );
+        document.body.innerHTML = html;
+        /* document.body.innerHTML = BillsUI({ data: bills }); */
         const store = null;
         const billsInstance = new Bills({ document, onNavigate, store, bills, localStorage: window.localStorage });
         const handleClickIconEye = jest.fn(billsInstance.handleClickIconEye);
