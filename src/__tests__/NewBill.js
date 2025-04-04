@@ -14,7 +14,12 @@ import router from "../app/Router"
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
     describe("When the form is correctly filled", () => {
-      test("It is correctly submitted, and I am redirected to the Bills page", () => {
+      test("It is correctly submitted", () => {
+        Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+        window.localStorage.setItem('user', JSON.stringify({
+          type: 'employee'
+        }));
+
         const html = NewBillUI();
         const container = document.createElement('div');
         container.innerHTML = html;
@@ -66,7 +71,6 @@ describe("Given I am connected as an employee", () => {
         /* userEvent.click(form); */
         fireEvent.submit(form);
         expect(handleClickNewBill).toHaveBeenCalled();
-        /* expect(screen.getByText('Envoyer une note de frais')).toBeTruthy(); */
         expect(screen.getByText('Mes notes de frais ')).toBeTruthy();
       })
     })
