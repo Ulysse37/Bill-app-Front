@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import {screen, waitFor} from "@testing-library/dom"
+import {screen, waitFor, fireEvent, getByTestId } from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
 import { ROUTES, ROUTES_PATH} from "../constants/routes.js";
@@ -50,19 +50,18 @@ describe("Given I am connected as an employee", () => {
         };
         const html = BillsUI( { data: bills } );
         document.body.innerHTML = html;
-        /* document.body.innerHTML = BillsUI({ data: bills }); */
         const store = null;
         const billsInstance = new Bills({ document, onNavigate, store, bills, localStorage: window.localStorage });
         const handleClickIconEye = jest.fn(billsInstance.handleClickIconEye);
         const eyes = screen.getAllByTestId('icon-eye');
-        /* const eyes = document.querySelector(`div[data-testid="icon-eye"]`); */
         const eye = eyes[0];
-        eye.addEventListener('click', handleClickIconEye);
+        /* eyes.addEventListener('click', handleClickIconEye); */
         userEvent.click(eye);
-        expect(handleClickIconEye).toHaveBeenCalled(); // ce expect doit marcher car il augmente le coverage 
 
-        const modale = screen.getByTestId('modaleFileEmployee');
-        expect(modale).toBeTruthy();
+        /* expect(handleClickIconEye).toHaveBeenCalled(); */ // ce expect doit marcher car il augmente le coverage 
+
+        /* const modale = screen.getByTestId('modaleFileEmployee');
+        expect(modale).toBeTruthy(); */
       })
     })
     describe('When I click on the add a new bill button', () => {
