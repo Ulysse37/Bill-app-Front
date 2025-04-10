@@ -55,7 +55,7 @@ describe("Given I am connected as an employee", () => {
         const handleClickIconEye = jest.fn(billsInstance.handleClickIconEye);
         const eyes = screen.getAllByTestId('icon-eye');
         const modaleFile = document.getElementById('modaleFile')
-        $.fn.modal = jest.fn(() => modaleFile.classList.add("show"));
+        $.fn.modal = jest.fn(); // mock la fonction modal de jQuery car jQuery pas dispo de base dans l'environnement de test
         const eye = eyes[0]; // cible la 1ere icone pour afficher la modale
         eye.addEventListener('click', handleClickIconEye(eye));
         userEvent.click(eye);
@@ -73,7 +73,6 @@ describe("Given I am connected as an employee", () => {
         window.localStorage.setItem('user', JSON.stringify({
           type: 'employee'
         }));
-        /* document.body.innerHTML = BillsUI({ data: bills }); */
         const billsInstance = new Bills({ document, onNavigate, localStorage });
         const handleClickNewBill = jest.fn(billsInstance.handleClickNewBill)
         const newBillButton = screen.getByTestId('btn-new-bill');
@@ -92,21 +91,20 @@ describe("Given I am connected as an employee", () => {
   describe("When I navigate to Bills", () => {
     test("fetches bills from mock API GET", async () => {
       localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
-      const root = document.createElement("div")
-      root.setAttribute("id", "root")
-      document.body.append(root)
-      router()
-      window.onNavigate(ROUTES_PATH.Bills)
-      console.log(document.body.innerHTML);
-      await waitFor(() => screen.getByText("Mes notes de frais")) // problème 1 : trouve pas le texte
+      const root = document.createElement("div");
+      root.setAttribute("id", "root");
+      document.body.append(root);
+      router();
+      window.onNavigate(ROUTES_PATH.Bills);
+      await waitFor(() => screen.getByText("Mes notes de frais")); // problème 1 : trouve pas le texte
 
 
       const billsElt = await screen.getByTestId("tbody") // je sais pas si je dois tester ça ?
       expect(billsElt).toBeTruthy()
     })
-  }) */
+  })
 
-  /* describe("When an error occurs on API", () => {
+  describe("When an error occurs on API", () => {
     beforeEach(() => {
       jest.spyOn(mockStore, "bills")
       Object.defineProperty(
@@ -152,5 +150,7 @@ describe("Given I am connected as an employee", () => {
       const message = await screen.getByText(/Erreur 500/)
       expect(message).toBeTruthy()
     }) 
-  }) 
-}) */
+  })
+
+}) 
+ */
