@@ -139,7 +139,7 @@ describe("Given I am connected as an employee", function () {
         expect(_dom.screen.getByText('Mes notes de frais')).toBeTruthy();
       });
     });
-    describe("When the file type of the image is not supported", function () {
+    describe("When the file type of the image uploaded is not supported", function () {
       test("It should display an alert", function () {
         Object.defineProperty(window, 'localStorage', {
           value: _localStorage.localStorageMock
@@ -171,6 +171,78 @@ describe("Given I am connected as an employee", function () {
         _userEvent["default"].upload(fileInput, file);
 
         expect(window.alert).toHaveBeenCalledWith('Seuls les fichiers jpg, jpeg et png sont acceptés'); // vérifie que l'alerte est bien déclenchée
+      });
+    }); // Test POST pour upload le file 
+
+    describe("When I upload a correct file type", function () {
+      test("Then it should update the bill with the uploaded file", function _callee() {
+        var mockCreate, mockStore, onNavigate, newBill, file, fileInput;
+        return regeneratorRuntime.async(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                // Mock store
+                mockCreate = jest.fn().mockResolvedValue({}); //
+
+                mockStore = {
+                  // Mock le store
+                  bills: function bills() {
+                    return {
+                      create: mockCreate // renvoie bien une promesse résolue
+
+                    };
+                  }
+                };
+                Object.defineProperty(window, 'localStorage', {
+                  value: _localStorage.localStorageMock
+                });
+                window.localStorage.setItem('user', JSON.stringify({
+                  type: 'employee',
+                  email: 'test@email.com'
+                }));
+                document.body.innerHTML = (0, _NewBillUI["default"])();
+                onNavigate = jest.fn(); // nouvelle instance de NewBill avec tous les mocks
+
+                newBill = new _NewBill["default"]({
+                  document: document,
+                  onNavigate: onNavigate,
+                  store: mockStore,
+                  localStorage: window.localStorage
+                });
+                file = new File(["image"], "image.jpg", {
+                  type: "image/jpg"
+                }); // Simule un un fichier avec un format valide
+
+                fileInput = _dom.screen.getByTestId("file"); // va chercher l'input où l'utilisateur upload le fichier
+
+                Object.defineProperty(fileInput, 'value', {
+                  value: 'C:\\fakepath\\image.jpg',
+                  // value de l'input que handleChangeFile va lire
+                  writable: true
+                });
+
+                _dom.fireEvent.change(fileInput, {
+                  // déclenche l'événement handleChangeFile au change de l'input
+                  target: {
+                    files: [file]
+                  }
+                });
+
+                _context.next = 13;
+                return regeneratorRuntime.awrap(new Promise(process.nextTick));
+
+              case 13:
+                // await pour que la promesse se termine 
+                expect(mockCreate).toHaveBeenCalled(); // le create() a bien été appelé 
+
+                expect(newBill.fileName).toBe("image.jpg"); // le fileName a bien été mis à jour avec le fichier donné
+
+              case 15:
+              case "end":
+                return _context.stop();
+            }
+          }
+        });
       });
     });
   });

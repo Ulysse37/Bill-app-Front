@@ -77,7 +77,7 @@ describe("Given I am connected as an employee", () => {
         expect(screen.getByText('Mes notes de frais')).toBeTruthy();
       })
     })
-    describe("When the file type of the image is not supported", () => {
+    describe("When the file type of the image uploaded is not supported", () => {
       test("It should display an alert", () => {
         Object.defineProperty(window, 'localStorage', { value: localStorageMock })
         window.localStorage.setItem('user', JSON.stringify({
@@ -98,6 +98,46 @@ describe("Given I am connected as an employee", () => {
         userEvent.upload(fileInput, file);
     
         expect(window.alert).toHaveBeenCalledWith('Seuls les fichiers jpg, jpeg et png sont acceptés'); // vérifie que l'alerte est bien déclenchée
+      })
+    })
+    // Test POST pour upload le file 
+    describe("When I upload a correct file type", () => {
+      test("Then it should update the bill with the uploaded file", async () => {
+        // Mock store
+        const mockCreate = jest.fn().mockResolvedValue({}); //
+        const mockStore = { // Mock le store
+          bills: () => ({
+            create: mockCreate // renvoie bien une promesse résolue
+          })
+        };
+        Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+        window.localStorage.setItem('user', JSON.stringify({
+          type: 'employee',
+          email: 'test@email.com'
+        }));
+        document.body.innerHTML = NewBillUI();
+        const onNavigate = jest.fn();
+        // nouvelle instance de NewBill avec tous les mocks
+        const newBill = new NewBill({ document, onNavigate, store: mockStore, localStorage: window.localStorage });
+  
+        const file = new File(["image"], "image.jpg", { type: "image/jpg" }); // Simule un un fichier avec un format valide
+        const fileInput = screen.getByTestId("file"); // va chercher l'input où l'utilisateur upload le fichier
+
+        Object.defineProperty(fileInput, 'value', {
+          value: 'C:\\fakepath\\image.jpg', // value de l'input que handleChangeFile va lire
+          writable: true
+        });
+  
+        fireEvent.change(fileInput, { // déclenche l'événement handleChangeFile au change de l'input
+          target: {
+            files: [file],
+          }
+        });
+  
+        await new Promise(process.nextTick); // await pour que la promesse se termine 
+  
+        expect(mockCreate).toHaveBeenCalled(); // le create() a bien été appelé 
+        expect(newBill.fileName).toBe("image.jpg"); // le fileName a bien été mis à jour avec le fichier donné
       })
     })
   })
