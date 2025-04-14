@@ -10,7 +10,9 @@ import {localStorageMock} from "../__mocks__/localStorage.js";
 import Bills from "../containers/Bills.js"
 import userEvent from '@testing-library/user-event';
 import router from "../app/Router.js";
-import mockStore from "../__mocks__/store"
+import mockStore from "../__mocks__/store";
+
+/* jest.mock("../app/store", () => mockStore); */
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -25,6 +27,7 @@ describe("Given I am connected as an employee", () => {
       document.body.append(root)
       router()
       window.onNavigate(ROUTES_PATH.Bills)
+      
       await waitFor(() => screen.getByTestId('icon-window'))
       const windowIcon = screen.getByTestId('icon-window')
       //to-do write expect expression
@@ -90,14 +93,32 @@ describe("Given I am connected as an employee", () => {
 describe("Given I am a user connected as an employee", () => {
   describe("When I navigate to Bills", () => {
     test("fetches bills from mock API GET", async () => {
+
+    /* Object.defineProperty(window, 'localStorage', { value: localStorageMock }) // simule scénario où l'utilisateur est connecté en employé
+      window.localStorage.setItem('user', JSON.stringify({ 
+        type: 'Employee'    
+      }));
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      };
+      const html = BillsUI( { data: bills } );
+      const store = null;
+      const billsInstance = new Bills({ document, onNavigate, store, bills, localStorage: window.localStorage });
+      const billsTitlescreen = screen.getByText("Mes notes de frais");
+      expect(billsTitlescreen).toBeTruthy(); */
+      
+
+
       localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
       const root = document.createElement("div");
       root.setAttribute("id", "root");
       document.body.append(root);
       router();
       window.onNavigate(ROUTES_PATH.Bills);
+      /* window.onNavigate('#employee/bills'); */
       
       /* await waitFor(() => screen.getByText("Mes notes de frais")); */ // problème 1 : trouve pas le texte
+      /* await waitFor(() => screen.getByText("Envoyer une note de frais")); */
 
       /* const billsTitlescreen = screen.getByText("Mes notes de frais");
       expect(billsTitlescreen).toBeTruthy(); */
@@ -107,6 +128,7 @@ describe("Given I am a user connected as an employee", () => {
 
       /* const billsElt = await screen.getByTestId("tbody") // je sais pas si je dois tester ça ?
       expect(billsElt).toBeTruthy() */
+      
     })
   })
 

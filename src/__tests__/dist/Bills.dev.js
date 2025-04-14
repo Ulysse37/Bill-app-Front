@@ -28,6 +28,7 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
+/* jest.mock("../app/store", () => mockStore); */
 describe("Given I am connected as an employee", function () {
   describe("When I am on Bills Page", function () {
     test("Then bill icon in vertical layout should be highlighted", function _callee() {
@@ -170,6 +171,18 @@ describe("Given I am a user connected as an employee", function () {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
+              /* Object.defineProperty(window, 'localStorage', { value: localStorageMock }) // simule scénario où l'utilisateur est connecté en employé
+                window.localStorage.setItem('user', JSON.stringify({ 
+                  type: 'Employee'    
+                }));
+                const onNavigate = (pathname) => {
+                  document.body.innerHTML = ROUTES({ pathname })
+                };
+                const html = BillsUI( { data: bills } );
+                const store = null;
+                const billsInstance = new Bills({ document, onNavigate, store, bills, localStorage: window.localStorage });
+                const billsTitlescreen = screen.getByText("Mes notes de frais");
+                expect(billsTitlescreen).toBeTruthy(); */
               localStorage.setItem("user", JSON.stringify({
                 type: "Employee",
                 email: "a@a"
@@ -179,8 +192,12 @@ describe("Given I am a user connected as an employee", function () {
               document.body.append(root);
               (0, _Router["default"])();
               window.onNavigate(_routes.ROUTES_PATH.Bills);
+              /* window.onNavigate('#employee/bills'); */
+
               /* await waitFor(() => screen.getByText("Mes notes de frais")); */
               // problème 1 : trouve pas le texte
+
+              /* await waitFor(() => screen.getByText("Envoyer une note de frais")); */
 
               /* const billsTitlescreen = screen.getByText("Mes notes de frais");
               expect(billsTitlescreen).toBeTruthy(); */

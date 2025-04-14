@@ -77,5 +77,28 @@ describe("Given I am connected as an employee", () => {
         expect(screen.getByText('Mes notes de frais')).toBeTruthy();
       })
     })
+    describe("When the file type of the image is not supported", () => {
+      test("It should display an alert", () => {
+        Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+        window.localStorage.setItem('user', JSON.stringify({
+          type: 'employee',
+          email: 'test@email.com'
+        }));
+        const html = NewBillUI();
+        document.body.innerHTML = html;
+    
+        const onNavigate = jest.fn();
+        const store = null;
+        const newBill = new NewBill({ document, onNavigate, store, localStorage: window.localStorage });
+        window.alert = jest.fn(); //mock l'alert de handleChangeFile
+    
+        const fileInput = screen.getByTestId('file'); // va chercher l'input où l'utilisateur upload le fichier
+        // crée un fichier avec mauvais format
+        const file = new File(["dummy content"], "test-file.pdf", { type: "application/pdf" });
+        userEvent.upload(fileInput, file);
+    
+        expect(window.alert).toHaveBeenCalledWith('Seuls les fichiers jpg, jpeg et png sont acceptés'); // vérifie que l'alerte est bien déclenchée
+      })
+    })
   })
 })
