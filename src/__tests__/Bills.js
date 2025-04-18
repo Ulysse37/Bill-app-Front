@@ -107,7 +107,10 @@ describe("Given I am a user connected as an employee", () => {
       const billsTitlescreen = screen.getByText("Mes notes de frais");
       expect(billsTitlescreen).toBeTruthy(); */
       
-
+      /* jest.spyOn(mockStore, "bills");
+      Object.defineProperty(window, "localStorage", {
+        value: localStorageMock,
+      }); */
 
       localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
       const root = document.createElement("div");

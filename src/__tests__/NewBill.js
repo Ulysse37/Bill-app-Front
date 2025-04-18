@@ -13,10 +13,6 @@ import router from "../app/Router"
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
-    /* describe("When I try to upload a wrong file type", () => {
-      test("it should display an alert", () => {
-      })
-    }) */
     describe("When the form is correctly filled", () => {
       test("It is correctly submitted", () => {
         Object.defineProperty(window, 'localStorage', { value: localStorageMock })
