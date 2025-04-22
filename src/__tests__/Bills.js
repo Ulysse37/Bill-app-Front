@@ -13,7 +13,7 @@ import router from "../app/Router.js";
 import mockStore from "../__mocks__/store";
 
 // mock le store 
-jest.mock("../app/store", () => { // remplace le store du /app par un mock 
+jest.mock("../app/store", () => { // remplace le store du /app par le mock de __mocks__
   const actual = jest.requireActual("../__mocks__/store"); // importe le mock du store de __mocks__
   return {
     __esModule: true, // indique que ce module utilise la syntaxe ES6 (car il utilise export default)
