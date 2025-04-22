@@ -12,7 +12,15 @@ import userEvent from '@testing-library/user-event';
 import router from "../app/Router.js";
 import mockStore from "../__mocks__/store";
 
-/* jest.mock("../app/store", () => mockStore); */
+// mock le store 
+jest.mock("../app/store", () => { // remplace le store du /app par un mock 
+  const actual = jest.requireActual("../__mocks__/store"); // importe le mock du store de __mocks__
+  return {
+    __esModule: true, // indique que ce module utilise la syntaxe ES6 (car il utilise export default)
+    default: actual.default // renvoie le mock du store de ___mocks__
+  };
+});
+
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -89,98 +97,75 @@ describe("Given I am connected as an employee", () => {
 })
 
 // test d'intégration GET Bills
-
 describe("Given I am a user connected as an employee", () => {
   describe("When I navigate to Bills", () => {
-    test("fetches bills from mock API GET", async () => {
-
-    /* Object.defineProperty(window, 'localStorage', { value: localStorageMock }) // simule scénario où l'utilisateur est connecté en employé
-      window.localStorage.setItem('user', JSON.stringify({ 
-        type: 'Employee'    
-      }));
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES({ pathname })
-      };
-      const html = BillsUI( { data: bills } );
-      const store = null;
-      const billsInstance = new Bills({ document, onNavigate, store, bills, localStorage: window.localStorage });
-      const billsTitlescreen = screen.getByText("Mes notes de frais");
-      expect(billsTitlescreen).toBeTruthy(); */
+    test("fetches bills from mock API GET and displays them", async () => {
+      jest.spyOn(mockStore, "bills"); // espionne les appels au store sur bills
       
-      /* jest.spyOn(mockStore, "bills");
-      Object.defineProperty(window, "localStorage", {
-        value: localStorageMock,
-      }); */
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+      window.localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
 
-      localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
       const root = document.createElement("div");
       root.setAttribute("id", "root");
-      document.body.append(root);
+      document.body.innerHTML = '';
+      document.body.appendChild(root);
+
       router();
       window.onNavigate(ROUTES_PATH.Bills);
-      /* window.onNavigate('#employee/bills'); */
-      
-      /* await waitFor(() => screen.getByText("Mes notes de frais")); */ // problème 1 : trouve pas le texte
-      /* await waitFor(() => screen.getByText("Envoyer une note de frais")); */
 
-      /* const billsTitlescreen = screen.getByText("Mes notes de frais");
-      expect(billsTitlescreen).toBeTruthy(); */
-      
-      /* const billsTitle = document.getElementsByClassName('content-title');
-      expect(billsTitle).toBeTruthy(); */  // Essayer de récup le titre comme ça à partir du getelementbyclassname??
+      await waitFor(() => screen.getByText('Mes notes de frais')); // "Mes notes de frais" apparaît bien
 
-      /* const billsElt = await screen.getByTestId("tbody") // je sais pas si je dois tester ça ?
-      expect(billsElt).toBeTruthy() */
-      
-    })
-  })
+      expect(mockStore.bills).toHaveBeenCalled(); //store.bills().list() a bien été appelé 
 
-  /* describe("When an error occurs on API", () => {
-    beforeEach(() => {
-      jest.spyOn(mockStore, "bills")
+      const rows = screen.getAllByRole('row'); // récupère les lignes du tableau
+      expect(rows.length).toBeGreaterThan(1); // il y a plus d'un ligne dans le tableau
+    });
+  });
+  describe("When an error occurs on API", () => {
+    beforeEach(() => { // avant chacun des 2 test d'erreur
+      jest.spyOn(mockStore, "bills");
       Object.defineProperty(
-          window,
-          'localStorage',
-          { value: localStorageMock }
-      )
-      window.localStorage.setItem('user', JSON.stringify({
-        type: 'Employee',
-        email: "a@a"
-      }))
-      const root = document.createElement("div")
-      root.setAttribute("id", "root")
-      document.body.appendChild(root)
-      router()
-    })
+        window,
+        "localStorage",
+        { value: localStorageMock }
+      );
+      window.localStorage.setItem("user", JSON.stringify({
+        type: "Employee",
+        email: "a@a" 
+      }));
+      const root = document.createElement("div");
+      root.setAttribute("id", "root");
+      document.body.innerHTML = "";
+      document.body.appendChild(root);
+      router();
+    });
 
     test("fetches bills from an API and fails with 404 message error", async () => {
 
       mockStore.bills.mockImplementationOnce(() => {
         return {
-          list : () =>  {
-            return Promise.reject(new Error("Erreur 404"))
-          }
-        }})
-      window.onNavigate(ROUTES_PATH.Bills)
-      await new Promise(process.nextTick);
-      const message = await screen.getByText(/Erreur 404/)
-      expect(message).toBeTruthy()
-    })
+          list: () => Promise.reject(new Error("Erreur 404")), // simule erreur 404
+        };
+      });
+
+      window.onNavigate(ROUTES_PATH.Bills);
+      await new Promise(process.nextTick); // await pour attendre l'erreur
+      const message = await screen.getByText(/Erreur 404/) // cherche le message d'erreur 
+      expect(message).toBeTruthy() // le message est bien trouvé
+    });
 
     test("fetches messages from an API and fails with 500 message error", async () => {
 
       mockStore.bills.mockImplementationOnce(() => {
         return {
-          list : () =>  {
-            return Promise.reject(new Error("Erreur 500"))
-          }
-        }})
+          list: () => Promise.reject(new Error("Erreur 500")), // simule erreur 500
+        };
+      });
 
-      window.onNavigate(ROUTES_PATH.Bills)
+      window.onNavigate(ROUTES_PATH.Bills);
       await new Promise(process.nextTick);
       const message = await screen.getByText(/Erreur 500/)
       expect(message).toBeTruthy()
-    }) 
-  }) */
-
-}) 
+    });
+  });
+});
