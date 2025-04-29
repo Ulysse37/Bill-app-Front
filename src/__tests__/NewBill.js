@@ -99,8 +99,7 @@ describe("Given I am connected as an employee", () => {
     // Test POST pour upload le file 
     describe("When I upload a correct file type", () => {
       test("Then it should update the bill with the uploaded file", async () => {
-        // Mock store
-        const mockCreate = jest.fn().mockResolvedValue({}); //
+        const mockCreate = jest.fn().mockResolvedValue({}); 
         const mockStore = { // Mock le store
           bills: () => ({
             create: mockCreate // renvoie bien une promesse résolue
