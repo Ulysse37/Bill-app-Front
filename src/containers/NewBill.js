@@ -22,6 +22,13 @@ export default class NewBill {
     const fileName = filePath[filePath.length-1]
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
+    const fileExtension = fileName.split('.').pop().toLowerCase(); // [Bug Hunt] - Bills -récupère le nom du type de fichier
+
+    if (fileExtension !== 'jpg' && fileExtension !== 'jpeg' && fileExtension !== 'png') { // Si le fichier n'est pas une img
+      alert('Seuls les fichiers jpg, jpeg et png sont acceptés'); // Envoie une alerte qui empêche la création de la facture
+      return;
+    }
+
     formData.append('file', file)
     formData.append('email', email)
 
@@ -62,6 +69,7 @@ export default class NewBill {
   }
 
   // not need to cover this function by tests
+  /* istanbul ignore next */
   updateBill = (bill) => {
     if (this.store) {
       this.store
